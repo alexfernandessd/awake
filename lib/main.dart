@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:awake/addAlarmDialog.dart';
+import 'package:awake/editAlarmDialog.dart';
+import 'package:awake/alarms.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,16 +23,61 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  static final List<Alarm> alarms = [];
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  addAlarmDialog() {
+    var context = this.context;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return new AddAlarmDialog(callBack: addAlarmCallBack);
+      },
+    );
+  }
 
-  void _incrementCounter() {
+  editAlarmDialog(DateTime time, String description, int index) {
+    var context = this.context;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return new EditAlarmDialog(callBack: editAlarmCallBack, time: time, description: description, index: index,);
+        });
+  }
+
+  makeCard(DateTime time, String description, int index) {
+    var timeString = time.hour.toString() + ":" + time.minute.toString();
+    return Card(
+      child: GestureDetector(
+        onTap: () {
+          editAlarmDialog(time, description, index);
+        },
+        child: new Text(
+          timeString,
+          style: TextStyle(
+            fontSize: 100.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  addAlarmCallBack(DateTime time, String description) {
+    Alarm newAlarm = Alarm(time, description);
     setState(() {
-      _counter++;
+      MyHomePage.alarms.add(newAlarm);
+    });
+  }
+
+  editAlarmCallBack(DateTime time, String description, int index) {
+    Alarm newAlarm = Alarm(time, description);
+    setState(() {
+      MyHomePage.alarms.removeAt(index);
+      MyHomePage.alarms.add(newAlarm);
     });
   }
 
@@ -40,38 +88,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Container(
-        child: ListView(children: [
-          Card(
-            child: InkWell(
-              splashColor: Colors.blue.withAlpha(30),
-              onTap: () {
-                print('Card tapped.');
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width * 1,
-                height: 100,
-                child: Text('Alarm'),
-              ),
-            ),
-          ),
-          Card(
-            child: InkWell(
-              splashColor: Colors.blue.withAlpha(30),
-              onTap: () {
-                print('Card tapped.');
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width * 1,
-                height: 100,
-                child: Text('Alarm'),
-              ),
-            ),
-          ),
-        ]),
+        child: new ListView.builder(
+          itemCount: MyHomePage.alarms.length,
+          itemBuilder: (BuildContext context, int index) {
+            return makeCard(
+              MyHomePage.alarms[index].time,
+              MyHomePage.alarms[index].description,
+              index,
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: addAlarmDialog,
+        tooltip: 'Add Alarm',
         child: Icon(Icons.add),
       ),
     );
