@@ -2,28 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
-class EditAlarmDialog extends StatefulWidget  {
+class AlarmDialog extends StatefulWidget {
   final Function callBack;
   final DateTime time;
   final String description;
   final int index;
-  const EditAlarmDialog({Key key, this.callBack, this.time, this.description, this.index}) : super(key: key);
+  const AlarmDialog({Key key, this.callBack, this.time, this.description, this.index})
+      : super(key: key);
 
   @override
-  AlarmDialog createState() => AlarmDialog();
+  _AlarmDialog createState() => _AlarmDialog();
 }
 
-class AlarmDialog extends State<EditAlarmDialog> {
-  final format = DateFormat("HH:mm");
+class _AlarmDialog extends State<AlarmDialog> {
   DateTime time;
   String description;
 
   @override
   void initState() {
+    if (widget.time == null) {
+      time = DateTime.now();
+    } else {
+      time = widget.time;
+    }
     super.initState();
   }
 
-  editAlarm(){
+  actionAlarm() {
     widget.callBack(time, description, widget.index);
   }
 
@@ -40,7 +45,7 @@ class AlarmDialog extends State<EditAlarmDialog> {
                 fontSize: 100.0,
               ),
               format: DateFormat("HH:mm"),
-              initialValue: widget.time,
+              initialValue: time,
               editable: false,
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -63,9 +68,9 @@ class AlarmDialog extends State<EditAlarmDialog> {
       ),
       actions: [
         FlatButton(
-          child: Text("Edit"),
+          child: Text(widget.index == null ? "Add" : "Edit"),
           onPressed: () {
-            editAlarm();
+            actionAlarm();
             Navigator.pop(this.context);
           },
         ),

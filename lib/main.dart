@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:awake/addAlarmDialog.dart';
-import 'package:awake/editAlarmDialog.dart';
+import 'package:awake/alarmDialog.dart';
 import 'package:awake/alarms.dart';
 
 void main() => runApp(MyApp());
@@ -23,30 +22,38 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
-  static final List<Alarm> alarms = [];
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  addAlarmDialog() {
-    var context = this.context;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return new AddAlarmDialog(callBack: addAlarmCallBack);
-      },
-    );
-  }
+  static final List<Alarm> alarms = [];
 
-  editAlarmDialog(DateTime time, String description, int index) {
+  alarmDialog({DateTime time, String description, int index}) {
     var context = this.context;
-    showDialog(
+
+    if (index == null) {
+      showDialog(
         context: context,
         builder: (BuildContext context) {
-          return new EditAlarmDialog(callBack: editAlarmCallBack, time: time, description: description, index: index,);
-        });
+          return new AlarmDialog(
+            callBack: alarmCallBack,
+            index: null,
+          );
+        },
+      );
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return new AlarmDialog(
+              callBack: alarmCallBack,
+              time: time,
+              description: description,
+              index: index,
+            );
+          });
+    }
   }
 
   makeCard(DateTime time, String description, int index) {
@@ -54,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Card(
       child: GestureDetector(
         onTap: () {
-          editAlarmDialog(time, description, index);
+          alarmDialog(time: time, description: description, index: index);
         },
         child: new Text(
           timeString,
@@ -66,19 +73,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  addAlarmCallBack(DateTime time, String description) {
-    Alarm newAlarm = Alarm(time, description);
-    setState(() {
-      MyHomePage.alarms.add(newAlarm);
-    });
-  }
-
-  editAlarmCallBack(DateTime time, String description, int index) {
-    Alarm newAlarm = Alarm(time, description);
-    setState(() {
-      MyHomePage.alarms.removeAt(index);
-      MyHomePage.alarms.add(newAlarm);
-    });
+  alarmCallBack(DateTime time, String description, int index) {
+    if (index == null) {
+      Alarm newAlarm = Alarm(time, description);
+      setState(() {
+        alarms.add(newAlarm);
+      });
+    } else {
+      Alarm newAlarm = Alarm(time, description);
+      setState(() {
+        alarms.removeAt(index);
+        alarms.add(newAlarm);
+      });
+    }
   }
 
   @override
@@ -89,18 +96,18 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: new ListView.builder(
-          itemCount: MyHomePage.alarms.length,
+          itemCount: alarms.length,
           itemBuilder: (BuildContext context, int index) {
             return makeCard(
-              MyHomePage.alarms[index].time,
-              MyHomePage.alarms[index].description,
+              alarms[index].time,
+              alarms[index].description,
               index,
             );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: addAlarmDialog,
+        onPressed: alarmDialog,
         tooltip: 'Add Alarm',
         child: Icon(Icons.add),
       ),
