@@ -16,20 +16,17 @@ class AlarmDialog extends StatefulWidget {
 
 class _AlarmDialog extends State<AlarmDialog> {
   DateTime time;
-  String description;
+  static final TextEditingController _description = TextEditingController();
 
   @override
   void initState() {
-    if (widget.time == null) {
-      time = DateTime.now();
-    } else {
-      time = widget.time;
-    }
     super.initState();
+    time = widget.time != null ? widget.time : DateTime.now();
+    _description.text = widget.description != null ? widget.description : "";
   }
 
   actionAlarm() {
-    widget.callBack(time, description, widget.index);
+    widget.callBack(time, _description.text, widget.index);
   }
 
   @override
@@ -56,12 +53,10 @@ class _AlarmDialog extends State<AlarmDialog> {
               },
             ),
             TextField(
+              controller: _description,
               decoration: InputDecoration(
                 hintText: widget.description,
               ),
-              onChanged: (desc) {
-                setState(() => description = desc);
-              },
             ),
           ],
         ),

@@ -59,16 +59,56 @@ class _MyHomePageState extends State<MyHomePage> {
   makeCard(DateTime time, String description, int index) {
     var timeString = time.hour.toString() + ":" + time.minute.toString();
     return Card(
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           alarmDialog(time: time, description: description, index: index);
         },
-        child: new Text(
-          timeString,
-          style: TextStyle(
-            fontSize: 100.0,
-          ),
-        ),
+        child: Column(children: <Widget>[
+          Row(children: <Widget>[
+            Column(children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    timeString.toString(),
+                    style: TextStyle(
+                      fontSize: 90.0,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 50.0,
+                    ),
+                  ),
+                ],
+              )
+            ]),
+            Column(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.45,
+                  alignment: Alignment(1, 0),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        alarms.removeAt(index);
+                      });
+                    },
+                    child: new FloatingActionButton(
+                      onPressed: null,
+                      tooltip: 'Remove Alarm',
+                      child: Icon(Icons.delete),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]),
+        ]),
       ),
     );
   }
@@ -82,8 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Alarm newAlarm = Alarm(time, description);
       setState(() {
-        alarms.removeAt(index);
-        alarms.add(newAlarm);
+        alarms[index] = newAlarm;
       });
     }
   }
