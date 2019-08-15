@@ -25,10 +25,6 @@ class _AlarmDialog extends State<AlarmDialog> {
     _description.text = widget.description != null ? widget.description : "";
   }
 
-  actionAlarm() {
-    widget.callBack(time, _description.text, widget.index);
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -65,7 +61,7 @@ class _AlarmDialog extends State<AlarmDialog> {
         FlatButton(
           child: Text(widget.index == null ? "Add" : "Edit"),
           onPressed: () {
-            actionAlarm();
+            widget.callBack(time, _description.text, widget.index);
             Navigator.pop(this.context);
           },
         ),

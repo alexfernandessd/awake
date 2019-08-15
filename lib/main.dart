@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:awake/alarmDialog.dart';
+import 'package:awake/alarmCard.dart';
 import 'package:awake/alarms.dart';
 
 void main() => runApp(MyApp());
@@ -31,86 +32,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   alarmDialog({DateTime time, String description, int index}) {
     var context = this.context;
-
-    if (index == null) {
-      showDialog(
+    showDialog(
         context: context,
         builder: (BuildContext context) {
           return new AlarmDialog(
             callBack: alarmCallBack,
-            index: null,
+            time: time,
+            description: description,
+            index: index,
           );
-        },
-      );
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return new AlarmDialog(
-              callBack: alarmCallBack,
-              time: time,
-              description: description,
-              index: index,
-            );
-          });
-    }
+        });
+  }
+
+  removeAlarm(int index) {
+    setState(() {
+      alarms.removeAt(index);
+    });
   }
 
   makeCard(DateTime time, String description, int index) {
-    var timeString = time.hour.toString() + ":" + time.minute.toString();
-    return Card(
-      child: InkWell(
-        onTap: () {
-          alarmDialog(time: time, description: description, index: index);
-        },
-        child: Column(children: <Widget>[
-          Row(children: <Widget>[
-            Column(children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    timeString.toString(),
-                    style: TextStyle(
-                      fontSize: 90.0,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 50.0,
-                    ),
-                  ),
-                ],
-              )
-            ]),
-            Column(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.45,
-                  alignment: Alignment(1, 0),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        alarms.removeAt(index);
-                      });
-                    },
-                    child: new FloatingActionButton(
-                      onPressed: null,
-                      tooltip: 'Remove Alarm',
-                      child: Icon(Icons.delete),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ]),
-        ]),
-      ),
-    );
+    return new AlarmCard(
+        callBackAlarmDialog: alarmDialog,
+        callBackDeleteAlarm: removeAlarm,
+        time: time,
+        description: description,
+        index: index);
   }
 
   alarmCallBack(DateTime time, String description, int index) {
