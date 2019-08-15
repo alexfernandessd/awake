@@ -20,12 +20,9 @@ class AlarmCard extends StatefulWidget {
 }
 
 class _AlarmCard extends State<AlarmCard> {
-  String timeString;
   @override
   void initState() {
     super.initState();
-    timeString =
-        widget.time.hour.toString() + ":" + widget.time.minute.toString();
   }
 
   @override
@@ -46,7 +43,7 @@ class _AlarmCard extends State<AlarmCard> {
                 Row(
                   children: <Widget>[
                     Text(
-                      timeString,
+                      widget.time.hour.toString() + ":" + widget.time.minute.toString(),
                       style: TextStyle(
                         fontSize: 90.0,
                       ),

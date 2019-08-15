@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   makeCard(DateTime time, String description, int index) {
-    return new AlarmCard(
+    return AlarmCard(
         callBackAlarmDialog: alarmDialog,
         callBackDeleteAlarm: removeAlarm,
         time: time,
