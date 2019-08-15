@@ -50,6 +50,7 @@ class _AlarmDialog extends State<AlarmDialog> {
             ),
             TextField(
               controller: _description,
+              maxLength: 13,
               decoration: InputDecoration(
                 hintText: widget.description,
               ),
